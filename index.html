@@ -115,22 +115,25 @@ main{padding:20px 36px 48px}
 .stage-label-spacer{flex:1}
 .stage-label-item.active{color:var(--blue);font-weight:700}
 
-.modal-grid{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
-.modal-field{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex:1;min-width:140px}
-.modal-field label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700;display:block;margin-bottom:4px}
+.modal-grid{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap}
+.modal-field{flex:1;min-width:140px}
+.modal-field label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600;display:block;margin-bottom:3px}
 .modal-field p{font-size:13px;color:var(--deep);line-height:1.5}
+.modal-field .contact-name{font-weight:600}
+.modal-field .contact-title{color:var(--muted);font-size:12px;font-weight:400}
+.modal-field .email-link{color:var(--blue);text-decoration:none;font-weight:500}
 .modal-field.full{width:100%;flex-basis:100%}
 .next-step-box{background:#E8F8F0;border:1px solid rgba(0,201,160,.15);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--deep);margin-top:12px}
 .next-step-box label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--green);font-weight:700;display:block;margin-bottom:5px}
 .drop-reason-box{background:#FEF5F5;border:1px solid rgba(224,72,72,.12);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--deep);margin-top:12px}
 .drop-reason-box label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--red);font-weight:700;display:block;margin-bottom:5px}
-.interactions-box{margin-top:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;max-height:260px;overflow-y:auto}
-.interactions-box label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700;display:block;margin-bottom:10px}
-.interaction-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(224,234,239,.4)}
-.interaction-item:last-child{border-bottom:none}
-.interaction-date{font-size:9px;font-weight:700;color:var(--blue);background:var(--blue-light);border:1px solid #BCD9ED;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
-.interaction-text{font-size:12px;color:var(--deep);line-height:1.5}
-.interaction-nodate{font-size:12px;color:var(--deep);line-height:1.5;padding:7px 0;border-bottom:1px solid rgba(224,234,239,.4)}
+.interactions-box{margin-top:14px;background:#fff;border:1px solid rgba(28,43,51,.06);border-radius:12px;padding:16px;max-height:280px;overflow-y:auto;box-shadow:0 2px 8px rgba(28,43,51,.04)}
+.interactions-box label{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:600;display:block;margin-bottom:12px}
+.interaction-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(28,43,51,.04)}
+.interaction-item:last-child{border-bottom:none;padding-bottom:0}
+.interaction-date{font-size:9px;font-weight:600;color:var(--deep);background:#fff;border:1px solid rgba(28,43,51,.1);padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.interaction-text{font-size:12px;color:var(--deep);line-height:1.6}
+.interaction-nodate{font-size:12px;color:var(--deep);line-height:1.6;padding:8px 0;border-bottom:1px solid rgba(28,43,51,.04)}
 .interaction-nodate:last-child{border-bottom:none}
 </style>
 </head>
@@ -383,8 +386,8 @@ function showModal(name){
   document.getElementById('modal-progress').innerHTML=b.dropped?'':prog+labels;
 
   var g='';
-  if(b.contact)g+='<div class="modal-field"><label>Interlocutor</label><p>'+b.contact+(b.title?'<br><span style="color:var(--muted);font-size:12px">'+b.title+'</span>':'')+'</p></div>';
-  if(b.email)g+='<div class="modal-field"><label>Email</label><p style="color:var(--blue)">'+b.email+'</p></div>';
+  if(b.contact)g+='<div class="modal-field"><label>Interlocutor</label><p><span class="contact-name">'+b.contact+'</span>'+(b.title?'<br><span class="contact-title">'+b.title+'</span>':'')+'</p></div>';
+  if(b.email)g+='<div class="modal-field"><label>Email</label><p><a class="email-link" href="mailto:'+b.email+'">'+b.email+'</a></p></div>';
   if(!b.contact&&!b.email)g+='<div class="modal-field full"><label>Info</label><p style="color:var(--muted)">No contact info</p></div>';
   document.getElementById('modal-grid').innerHTML=g;
 
