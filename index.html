@@ -57,16 +57,16 @@ main{padding:20px 36px 48px}
 .sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--deep);white-space:nowrap}
 .sec-line{flex:1;height:1px;background:var(--border)}
 
-.funnel-wrap{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:12px;padding:24px 20px 14px}
+.funnel-wrap{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:12px;padding:20px 20px 12px}
 .funnel-bars{display:flex;align-items:flex-end;gap:6px;height:200px}
 .f-col{width:0;flex:1 1 0;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
 .f-top{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:4px}
 .f-num{font-size:12px;font-weight:600;color:var(--deep);line-height:1}
 .f-bar{width:100%;border-radius:6px 6px 0 0;min-height:6px;display:flex;align-items:center;justify-content:center;transition:height .6s cubic-bezier(.34,1.56,.64,1)}
 .f-arrow{font-size:8px;font-weight:600;padding:2px 6px;border-radius:6px;display:inline-flex;align-items:center;gap:2px;color:#fff;background:rgba(255,255,255,.22)}
-.f-label-row{height:42px;width:100%;display:flex;align-items:flex-start;justify-content:center;padding-top:6px}
+.f-label-row{height:34px;width:100%;display:flex;align-items:flex-start;justify-content:center;padding-top:5px}
 .f-label{font-size:8.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--deep);text-align:center;line-height:1.3;font-weight:600;word-break:break-word}
-.funnel-footer{display:flex;align-items:center;gap:14px;margin-top:12px;padding:0 2px}
+.funnel-footer{display:flex;align-items:center;gap:14px;margin-top:8px;padding:0 2px}
 .funnel-legend{display:flex;align-items:center;gap:8px}
 .funnel-legend span{font-size:9px;color:var(--muted);display:inline-flex;align-items:center;gap:3px}
 .variation-period{font-size:9px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:4px}
@@ -279,9 +279,20 @@ function load(){
     else{counts={identified:buyers.length,approached:buyers.filter(function(b){return b.approached}).length,teaser:buyers.filter(function(b){return b.teaser}).length,nda_sent:buyers.filter(function(b){return b.nda_sent}).length,nda_signed:buyers.filter(function(b){return b.nda_signed}).length,im_sent:buyers.filter(function(b){return b.im_sent}).length,mgmt:0,loi:0,phase2:0,site_visit:0,binding:0}}
     if(prevRow){STAGES.forEach(function(s){var ci=stMap[s.key];prev[s.key]=(ci!==undefined&&prevRow[ci])?parseInt(prevRow[ci])||0:0})}
 
-    // Variation date from "Previous" row label or fallback
+    // Variation date — look for "Last update" date or any date in config rows
     var varDate='—';
-    if(prevRow){for(var j=0;j<prevRow.length;j++){var v=(prevRow[j]||'');if(v.indexOf('Previous')>=0||v.indexOf('Feb')>=0||v.indexOf('Mar')>=0||v.indexOf('Jan')>=0){var dm=v.match(/(\w+ \d{4})/);if(dm)varDate=dm[1];break}}}
+    for(var i=0;i<Math.min(data.length,hIdx);i++){
+      for(var j=0;j<data[i].length;j++){
+        var v=(data[i][j]||'').trim();
+        // Match date formats like "2026-03-06" or "06 Mar 2026" or "Mar 2026"
+        if(v.match(/^\d{4}-\d{2}-\d{2}$/)){
+          var parts=v.split('-');
+          var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          varDate=months[parseInt(parts[1])-1]+' '+parts[0];
+        }
+        if(v.match(/\d{1,2}\s+\w+\s+\d{4}/)){varDate=v}
+      }
+    }
     document.getElementById('variation-date').textContent=varDate;
 
     // FUNNEL
@@ -350,7 +361,7 @@ function showModal(name){
   MODAL_STAGES.forEach(function(s,idx){
     var has=b[s.key];var isHighest=s.key===b.highestKey;
     if(idx>0){prog+='<div class="stage-connector '+(has||reached?'done':'pending')+'"></div>'}
-    if(isHighest){prog+='<div class="stage-dot active" style="background:'+STAGE_COLORS[s.key]+'">●</div>';reached=true}
+    if(isHighest){prog+='<div class="stage-dot active" style="background:'+STAGE_COLORS[s.key]+'">✓</div>';reached=true}
     else if(has&&!reached){prog+='<div class="stage-dot done" style="background:'+STAGE_COLORS[s.key]+'">✓</div>'}
     else{prog+='<div class="stage-dot pending" style="background:'+STAGE_COLORS[s.key]+'"></div>';if(!has)reached=true}
     labels+='<div class="stage-label-item'+(isHighest?' active':'')+'">'+s.label+'</div>';
