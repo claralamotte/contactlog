@@ -395,7 +395,9 @@ function showModal(name){
   else{document.getElementById('modal-nextstep').innerHTML=b.next?'<div class="next-step-box"><label>Next step</label>'+b.next+'</div>':''}
 
   var ints=parseInteractions(b.comments);var ih='';
-  if(ints.length){ih='<div class="interactions-box"><label>Interactions</label>';for(var i=0;i<ints.length;i++){ih+=ints[i].date?'<div class="interaction-item"><div class="interaction-date">'+ints[i].date+'</div><div class="interaction-text">'+ints[i].text+'</div></div>':'<div class="interaction-nodate">'+ints[i].text+'</div>'}ih+='</div>'}
+  // Filter out the drop line from interactions if already shown in drop reason
+  var filteredInts=b.dropped?ints.filter(function(x){return x.text.toLowerCase().indexOf('drop')<0}):ints;
+  if(filteredInts.length){ih='<div class="interactions-box"><label>Interactions</label>';for(var i=0;i<filteredInts.length;i++){ih+=filteredInts[i].date?'<div class="interaction-item"><div class="interaction-date">'+filteredInts[i].date+'</div><div class="interaction-text">'+filteredInts[i].text+'</div></div>':'<div class="interaction-nodate">'+filteredInts[i].text+'</div>'}ih+='</div>'}
   document.getElementById('modal-comments').innerHTML=ih;
   document.getElementById('modal-overlay').classList.add('open');
 }
