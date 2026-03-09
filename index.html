@@ -50,24 +50,27 @@ main{padding:20px 36px 48px}
 .sec-line{flex:1;height:1px;background:var(--border)}
 /* FUNNEL */
 .funnel-wrap{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:12px;padding:20px 20px 12px}
-.conv-row{display:flex;align-items:center;margin-bottom:10px;position:relative}
-.conv-row .cr-col{width:0;flex:1 1 0;display:flex;justify-content:center;position:relative;z-index:2}
-.cr-dot{width:10px;height:10px;border-radius:50%}
-.cr-pct{position:absolute;font-size:10px;font-weight:600;color:var(--muted);background:#fff;padding:2px 7px;border-radius:10px;border:1px solid rgba(28,43,51,.08);z-index:3;white-space:nowrap;transform:translateX(50%);right:0;top:-1px}
-.cr-fullline{position:absolute;top:50%;left:0;right:0;height:1.5px;background:rgba(28,43,51,.12);transform:translateY(-50%);z-index:1}
-.funnel-bars{display:flex;align-items:flex-end;gap:0;height:170px}
-.f-col{width:0;flex:1 1 0;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
-.f-top{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:4px}
-.f-num{font-size:11px;font-weight:600;color:var(--deep)}
-.f-bar{width:55%;border-radius:6px 6px 0 0;min-height:6px;display:flex;align-items:center;justify-content:center}
+.funnel-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:0}
+/* Row 1: dots + conversion % */
+.fg-dot-cell{display:flex;justify-content:center;align-items:center;padding-bottom:4px}
+.fg-dot{width:10px;height:10px;border-radius:50%}
+.fg-pct-cell{display:flex;justify-content:center;align-items:center;position:relative;padding-bottom:4px}
+.fg-pct-line{position:absolute;top:50%;left:0;right:0;height:1.5px;background:rgba(28,43,51,.12);transform:translateY(-50%)}
+.fg-pct{font-size:10px;font-weight:600;color:var(--muted);background:#fff;padding:2px 7px;border-radius:10px;border:1px solid rgba(28,43,51,.08);position:relative;z-index:1}
+/* Row 2: numbers */
+.fg-num-cell{display:flex;justify-content:center;padding-bottom:4px}
+.fg-num{font-size:11px;font-weight:600;color:var(--deep)}
+/* Row 3: bars */
+.fg-bar-cell{display:flex;justify-content:center;align-items:flex-end;height:160px}
+.fg-bar{width:55%;border-radius:6px 6px 0 0;min-height:6px;display:flex;align-items:center;justify-content:center}
 .f-arr{font-size:8px;font-weight:600;padding:2px 6px;border-radius:6px;display:inline-flex;align-items:center;gap:2px;color:#fff;background:rgba(255,255,255,.22)}
-.f-lbl-row{height:30px;width:100%;display:flex;align-items:flex-start;justify-content:center;padding-top:5px}
-.f-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.04em;color:var(--deep);text-align:center;line-height:1.3;font-weight:600;word-break:break-word}
+/* Row 4: labels */
+.fg-lbl-cell{display:flex;justify-content:center;padding-top:5px}
+.fg-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.04em;color:var(--deep);text-align:center;line-height:1.3;font-weight:600;word-break:break-word}
 .funnel-footer{display:flex;align-items:center;gap:10px;margin-top:10px;padding:0 2px;flex-wrap:wrap}
 .funnel-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .legend-item{font-size:9px;color:var(--muted);display:inline-flex;align-items:center;gap:4px}
 .legend-bubble{display:inline-flex;align-items:center;gap:3px;background:#fff;border:1px solid rgba(28,43,51,.08);padding:2px 7px;border-radius:10px;font-size:9px;font-weight:600;color:var(--muted)}
-.funnel-legend strong{color:var(--deep);font-weight:600}
 /* PIPELINE */
 .pipeline-grid{display:grid;gap:10px}
 .stage-hdr{padding:9px 12px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between}
@@ -152,8 +155,7 @@ main{padding:20px 36px 48px}
 <div id="dashboard"><main>
   <div class="sec"><div class="sec-head"><div class="sec-lbl">Deal Funnel</div><div class="sec-line"></div></div>
     <div class="funnel-wrap">
-      <div id="conv-row" class="conv-row"></div>
-      <div class="funnel-bars" id="fb"></div>
+      <div id="funnel-grid" class="funnel-grid"></div>
       <div class="funnel-footer"><div class="funnel-legend">
         <div class="legend-item"><div class="legend-bubble"><svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V2M6 2L3 5M6 2l3 3"/></svg>+x</div> Variation since <span id="vd">—</span></div>
         <div class="legend-item"><div class="legend-bubble">–</div> No change</div>
@@ -302,18 +304,45 @@ function load(){fetchD().then(function(data){
   if(fR){STG.forEach(function(s){var ci=sM[s.k];cnt[s.k]=(ci!==undefined&&fR[ci])?parseInt(fR[ci])||0:0})}
   else{cnt={identified:buyers.length,approached:buyers.filter(function(b){return b.approached}).length,teaser:buyers.filter(function(b){return b.teaser}).length,nda_sent:buyers.filter(function(b){return b.nda_sent}).length,nda_signed:buyers.filter(function(b){return b.nda_signed}).length,im_sent:buyers.filter(function(b){return b.im_sent}).length,mgmt:0,loi:0,phase2:0,site_visit:0,binding:0}}
   if(pR){STG.forEach(function(s){var ci=sM[s.k];prv[s.k]=(ci!==undefined&&pR[ci])?parseInt(pR[ci])||0:0})}
-  // Conv row — same flex:1 1 0 as funnel bars, one dot per stage, % positioned between dots
-  var cr='<div class="cr-fullline"></div>';
-  STG.forEach(function(s,idx){
-    var pctHtml='';
-    if(idx<STG.length-1){var cv=cnt[s.k]||0,nv=cnt[STG[idx+1].k]||0;var pct=cv>0?Math.round((nv/cv)*100)+'%':'—';pctHtml='<div class="cr-pct">'+pct+'</div>'}
-    cr+='<div class="cr-col"><div class="cr-dot" style="background:'+s.c+'"></div>'+pctHtml+'</div>';
-  });document.getElementById('conv-row').innerHTML=cr;
-  // Funnel bars
+  // Funnel — single CSS grid: 21 columns (11 stages + 10 gaps)
+  // Row 1: dots + % between
+  // Row 2: numbers
+  // Row 3: bars
+  // Row 4: labels
+  var nCols=STG.length*2-1; // 21
+  var gridEl=document.getElementById('funnel-grid');
+  gridEl.style.gridTemplateColumns='repeat('+nCols+',1fr)';
   var mx=1;STG.forEach(function(s){if((cnt[s.k]||0)>mx)mx=cnt[s.k]});
   var aw='<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V2M6 2L3 5M6 2l3 3"/></svg>';
-  var fh='';STG.forEach(function(s){var v=cnt[s.k]||0,p=prv[s.k],h=Math.max(6,(v/mx)*150);var d=(p!==undefined)?v-p:0;var ar='';if(v>0){ar=d>0?'<div class="f-arr">'+aw+d+'</div>':'<div class="f-arr">–</div>'}fh+='<div class="f-col"><div class="f-top"><div class="f-num">'+v+'</div></div><div class="f-bar" style="height:'+h+'px;background:'+s.c+'">'+ar+'</div><div class="f-lbl-row"><div class="f-lbl">'+s.l+'</div></div></div>'});
-  document.getElementById('fb').innerHTML=fh;
+  var gh='';
+  // Row 1: dots and %
+  STG.forEach(function(s,idx){
+    var col=idx*2+1;
+    gh+='<div class="fg-dot-cell" style="grid-column:'+col+'"><div class="fg-dot" style="background:'+s.c+'"></div></div>';
+    if(idx<STG.length-1){
+      var cv=cnt[s.k]||0,nv=cnt[STG[idx+1].k]||0;
+      var pct=cv>0?Math.round((nv/cv)*100)+'%':'—';
+      gh+='<div class="fg-pct-cell" style="grid-column:'+(col+1)+'"><div class="fg-pct-line"></div><div class="fg-pct">'+pct+'</div></div>';
+    }
+  });
+  // Row 2: numbers
+  STG.forEach(function(s,idx){
+    var col=idx*2+1;var v=cnt[s.k]||0;
+    gh+='<div class="fg-num-cell" style="grid-column:'+col+'"><div class="fg-num">'+v+'</div></div>';
+  });
+  // Row 3: bars
+  STG.forEach(function(s,idx){
+    var col=idx*2+1;var v=cnt[s.k]||0;var h=Math.max(6,(v/mx)*150);
+    var p=prv[s.k];var d=(p!==undefined)?v-p:0;
+    var ar='';if(v>0){ar=d>0?'<div class="f-arr">'+aw+d+'</div>':'<div class="f-arr">–</div>'}
+    gh+='<div class="fg-bar-cell" style="grid-column:'+col+'"><div class="fg-bar" style="height:'+h+'px;background:'+s.c+'">'+ar+'</div></div>';
+  });
+  // Row 4: labels
+  STG.forEach(function(s,idx){
+    var col=idx*2+1;
+    gh+='<div class="fg-lbl-cell" style="grid-column:'+col+'"><div class="fg-lbl">'+s.l+'</div></div>';
+  });
+  gridEl.innerHTML=gh;
   // Pipeline — fixed 5 columns, always show all
   var pK=['teaser','nda_sent','nda_signed','im_sent','mgmt'];
   function hp(b){for(var i=pK.length-1;i>=0;i--){if(b[pK[i]])return pK[i]}return null}
