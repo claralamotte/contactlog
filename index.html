@@ -212,7 +212,15 @@ function L(n,d,m){var dom=d||'',i=I(n);if(dom){if(m)return'<img src="https://img
 function card(b){return'<div class="cc" onclick="showM(\''+b.name.replace(/'/g,"\\'")+'\')" ><div class="cc-logo">'+L(b.name,b.domain)+'</div><div class="cc-name">'+S(b.name)+'</div></div>'}
 
 function csvP(t){var rows=[],row=[],cell='',q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){cell+='"';i++}else q=false}else cell+=c}else{if(c==='"')q=true;else if(c===','){row.push(cell);cell=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(cell);cell='';if(row.length>1||row[0]!=='')rows.push(row);row=[]}else cell+=c}}row.push(cell);if(row.length>1||row[0]!=='')rows.push(row);return rows}
-function fetchD(){return new Promise(function(res,rej){var u='https://docs.google.com/spreadsheets/d/'+SK+'/gviz/tq?tqx=out:csv&gid='+GI;fetch(u).then(function(r){return r.text()}).then(function(t){res(csvP(t))}).catch(function(){var x=new XMLHttpRequest();x.open('GET',u,true);x.onload=function(){x.status===200?res(csvP(x.responseText)):rej('err')};x.onerror=function(){rej('fail')};x.send()})})}
+function fetchD(){return new Promise(function(res,rej){
+  var u1='https://docs.google.com/spreadsheets/d/'+SK+'/export?format=csv&gid='+GI;
+  var u2='https://docs.google.com/spreadsheets/d/'+SK+'/gviz/tq?tqx=out:csv&gid='+GI;
+  fetch(u1).then(function(r){return r.text()}).then(function(t){res(csvP(t))}).catch(function(){
+    fetch(u2).then(function(r){return r.text()}).then(function(t){res(csvP(t))}).catch(function(){
+      var x=new XMLHttpRequest();x.open('GET',u2,true);x.onload=function(){x.status===200?res(csvP(x.responseText)):rej('err')};x.onerror=function(){rej('fail')};x.send()
+    })
+  })
+})}
 function pD(s){if(!s)return null;s=s.trim();var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3]));return null}
 function dB(a,b){return Math.floor((b-a)/864e5)}
 
