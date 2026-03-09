@@ -53,6 +53,7 @@ main{padding:20px 36px 48px}
 .funnel-wrap{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:12px;padding:20px 20px 12px}
 .funnel-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:0;position:relative}
 .fg-conv-line{position:absolute;top:9px;left:calc(100%/42);right:calc(100%/42);height:1.5px;background:rgba(28,43,51,.12);z-index:0}
+.fg-axis-line{position:absolute;left:0;right:0;height:1.5px;background:rgba(28,43,51,.15);z-index:0}
 /* Row 1: dots + conversion % */
 .fg-dot-cell{display:flex;justify-content:center;align-items:center;padding-bottom:4px;position:relative;z-index:2}
 .fg-dot{width:10px;height:10px;border-radius:50%}
@@ -62,7 +63,7 @@ main{padding:20px 36px 48px}
 /* Row 3: bars */
 .fg-bar-cell{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:180px}
 .fg-bar-num{font-size:14px;font-weight:700;color:var(--deep);margin-bottom:4px}
-.fg-bar{width:80%;border-radius:6px 6px 0 0;min-height:6px;display:flex;align-items:center;justify-content:center}
+.fg-bar{width:100%;border-radius:6px 6px 0 0;min-height:6px;display:flex;align-items:center;justify-content:center}
 .f-arr{font-size:8px;font-weight:600;padding:2px 6px;border-radius:6px;display:inline-flex;align-items:center;gap:2px;color:#fff;background:rgba(255,255,255,.22)}
 /* Row 4: labels */
 .fg-lbl-cell{display:flex;justify-content:center;padding-top:5px}
@@ -354,7 +355,7 @@ function load(){fetchD().then(function(data){
   gridEl.style.gridTemplateColumns='repeat('+nCols+',1fr)';
   var mx=1;STG.forEach(function(s){if((cnt[s.k]||0)>mx)mx=cnt[s.k]});
   var aw='<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V2M6 2L3 5M6 2l3 3"/></svg>';
-  var gh='<div class="fg-conv-line"></div>';
+  var gh='<div class="fg-conv-line"></div><div class="fg-axis-line" id="fg-axis"></div>';
   // Row 1: dots and %
   STG.forEach(function(s,idx){
     var col=idx*2+1;
@@ -378,6 +379,8 @@ function load(){fetchD().then(function(data){
     gh+='<div class="fg-lbl-cell" style="grid-column:'+col+'"><div class="fg-lbl">'+s.l+'</div></div>';
   });
   gridEl.innerHTML=gh;
+  // Position axis line at bottom of bar cells
+  setTimeout(function(){var bars=gridEl.querySelectorAll('.fg-bar-cell');if(bars.length){var rect=bars[0].getBoundingClientRect();var gridRect=gridEl.getBoundingClientRect();document.getElementById('fg-axis').style.top=(rect.bottom-gridRect.top)+'px'}},50);
   // Pipeline — fixed 5 columns, always show all
   var pK=['teaser','nda_sent','nda_signed','im_sent','mgmt'];
   function hp(b){for(var i=pK.length-1;i>=0;i--){if(b[pK[i]])return pK[i]}return null}
@@ -409,7 +412,7 @@ function showM(name){
   document.getElementById('sdd').classList.remove('open');
   document.getElementById('ml').innerHTML=L(b.name,b.domain,true);
   document.getElementById('mn').textContent=b.name;
-  document.getElementById('mb').innerHTML=b.dropped?'<div class="md-badge" style="background:rgba(224,72,72,.07);border:1px solid rgba(224,72,72,.15);color:var(--red)">↩ Drop</div>':'<div class="md-badge" style="background:var(--blue-light);border:1px solid #BCD9ED;color:var(--blue)">● '+b.highest+'</div>';
+  document.getElementById('mb').innerHTML=b.dropped?'<div class="md-badge" style="background:rgba(224,72,72,.07);border:1px solid rgba(224,72,72,.15);color:var(--red)">✕ Drop</div>':'<div class="md-badge" style="background:var(--blue-light);border:1px solid #BCD9ED;color:var(--blue)">● '+b.highest+'</div>';
   if(b.dis!==null&&!b.dropped){document.getElementById('mt').innerHTML='<span style="color:'+SC[b.hk]+';font-style:italic">'+b.dis+' days in current stage</span>'}else{document.getElementById('mt').innerHTML=''}
   // Stage progress
   var hi=0;for(var si=0;si<MST.length;si++){if(MST[si].k===b.hk){hi=si;break}}
