@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact Log - Project EDELWEISS</title>
-<link rel="icon" href="https://img.logo.dev/cross-pharm.ch?token=pk_bYWEonUXSpa1_O-4n_OaKQ&format=png&size=64">
+<link rel="icon" id="favicon" href="">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -275,6 +275,8 @@ function load(){fetchD().then(function(data){
   console.log('Merged headers:',JSON.stringify(col));
   // Funnel rows
   var fR=null,pR=null;for(var i=0;i<Math.min(data.length,10);i++){for(var j=0;j<data[i].length;j++){if((data[i][j]||'').indexOf('Current')>=0){fR=data[i];if(data[i+1])pR=data[i+1];break}}if(fR)break}
+  // Client domain for favicon
+  for(var i=0;i<Math.min(data.length,hI);i++){for(var j=0;j<data[i].length;j++){if((data[i][j]||'').toLowerCase().trim()==='client domain'){var cd=(data[i][j+1]||'').trim();if(cd){document.getElementById('favicon').href='https://img.logo.dev/'+cd+'?token='+TK+'&format=png&size=64'}break}}}
   // Variation date — find "Previous update" row and read the date next to it
   var vd='—';
   var frMos={'janv':0,'févr':1,'mars':2,'avr':3,'mai':4,'juin':5,'juil':6,'août':7,'sept':8,'oct':9,'nov':10,'déc':11};
