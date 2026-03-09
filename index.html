@@ -427,7 +427,7 @@ function showM(name){
   if(!b.contact&&!b.email)g+='<div class="md-di"><div class="dl">Info</div><div class="dv" style="color:var(--muted)">No contact info</div></div>';
   g+='</div>';document.getElementById('mdet').innerHTML=g;
   // Next step / drop
-  if(b.dropped){var dr='',dDate='';var ints=pInt(b.comments);for(var i=0;i<ints.length;i++){if(ints[i].text.toLowerCase().indexOf('drop')>=0){dr=ints[i].text.replace(/^drop\s*[-–—>:]+\s*/i,'').replace(/^-->\s*/,'').trim();if(ints[i].date)dDate=ints[i].date;break}}if(!dr&&b.next)dr=b.next;var dh='';if(dr){dh='<div class="dr-box">';if(dDate)dh+='<div class="dr-date">'+dDate+'</div>';dh+='<div class="dr-label">Drop</div><div class="dr-text">— '+dr+'</div></div>'}document.getElementById('mns').innerHTML=dh}
+  if(b.dropped){var dr='',dDate='';var ints=pInt(b.comments);for(var i=0;i<ints.length;i++){if(ints[i].text.toLowerCase().indexOf('drop')>=0){dr=ints[i].text.replace(/^drop\s*[-–—>:]+\s*/i,'').replace(/^-->\s*/,'').trim();if(ints[i].date)dDate=ints[i].date;break}}if(!dr&&b.next)dr=b.next;var dh='';if(dr){dh='<div class="dr-box">';if(dDate)dh+='<div class="dr-date">'+dDate+'</div>';dh+='<div class="dr-label">Drop</div><div class="dr-text">Drop reason : '+dr+'</div></div>'}document.getElementById('mns').innerHTML=dh}
   else{document.getElementById('mns').innerHTML=b.next?'<div class="ns-box"><label>Next step</label>'+b.next+'</div>':''}
   // Interactions
   var ints=pInt(b.comments);var fi=b.dropped?ints.filter(function(x){return x.text.toLowerCase().indexOf('drop')<0}):ints;
