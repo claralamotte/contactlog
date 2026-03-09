@@ -51,9 +51,9 @@ main{padding:20px 36px 48px}
 .sec-line{flex:1;height:1px;background:var(--border)}
 /* FUNNEL */
 .funnel-wrap{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:12px;padding:20px 20px 12px}
-.funnel-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:0;position:relative}
-.fg-conv-line{position:absolute;top:9px;left:calc(100%/42);right:calc(100%/42);height:1.5px;background:rgba(28,43,51,.12);z-index:0}
-.fg-axis-line{position:absolute;left:0;right:0;height:1.5px;background:rgba(28,43,51,.15);z-index:0}
+.funnel-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:0;position:relative;padding:0 30px}
+.fg-conv-line{position:absolute;top:9px;left:calc(100%/42 + 30px);right:calc(100%/42 + 30px);height:1.5px;background:rgba(28,43,51,.12);z-index:0}
+.fg-axis-line{position:absolute;left:30px;right:30px;height:1.5px;background:#fff;z-index:0}
 /* Row 1: dots + conversion % */
 .fg-dot-cell{display:flex;justify-content:center;align-items:center;padding-bottom:4px;position:relative;z-index:2}
 .fg-dot{width:10px;height:10px;border-radius:50%}
@@ -151,7 +151,7 @@ main{padding:20px 36px 48px}
 <div class="stat-pills">
   <div class="stat-pill"><div class="pill-n"><span id="days-count">—</span> days</div><div class="pill-l">Since launch</div><div class="pill-sub">Launched 18 Jan 2026</div></div>
   <div class="stat-pill"><div class="pill-n" id="lu-n">—</div><div class="pill-l">Last update</div><div class="pill-sub" id="lu-sub">—</div></div>
-  <div class="stat-pill"><div class="pill-n" id="pa-n">—</div><div class="pill-l">Active buyers</div><div class="pill-sub" id="pa-sub">—</div></div>
+  <div class="stat-pill"><div class="pill-n" id="pa-n">—</div><div class="pill-sub" id="pa-sub">—</div></div>
 </div>
 <div id="loading"><div class="spinner"></div><p>Loading data from Google Sheets…</p></div>
 <div id="dashboard"><main>
@@ -338,8 +338,8 @@ function load(){fetchD().then(function(data){
   // Pills
   var appA=buyers.filter(function(b){return b.approached&&!b.dropped});
   var appD=buyers.filter(function(b){return b.approached&&b.dropped});
-  document.getElementById('pa-n').textContent=appA.length+' active';
-  document.getElementById('pa-sub').innerHTML=buyers.filter(function(b){return b.approached}).length+' approached<br><span style="color:#bbb">('+appD.length+' drops)</span>';
+  document.getElementById('pa-n').textContent=appA.length+' active buyers';
+  document.getElementById('pa-sub').innerHTML=buyers.filter(function(b){return b.approached}).length+' approached / <span style="color:#bbb">('+appD.length+' drops)</span>';
   // Funnel counts
   var sM={identified:col.identified,approached:col.approached,teaser:col.teaser,nda_sent:col.nda_sent,nda_signed:col.nda_signed,im_sent:col.im_sent,mgmt:col.mgmt,loi:col.loi,phase2:col.phase2,site_visit:col.site_visit,binding:col.binding};
   var cnt={},prv={};
