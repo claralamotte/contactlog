@@ -239,8 +239,14 @@ function load(){fetchD().then(function(data){
     var ct=(col.contact!==undefined?(row[col.contact]||''):'').trim();
     var ti=(col.title!==undefined?(row[col.title]||''):'').trim();
     var em=(col.email!==undefined?(row[col.email]||''):'').trim();
-    function hv(k){return col[k]!==undefined&&row[col[k]]&&row[col[k]].trim()?true:false}
-    var _a=hv('approached'),_t=hv('teaser'),_ns=hv('nda_sent'),_nd=hv('nda_signed'),_im=hv('im_sent'),_mg=hv('mgmt'),_lo=hv('loi'),_bi=hv('binding');
+    var _a=col.approached!==undefined&&row[col.approached]&&row[col.approached].trim()?true:false;
+    var _t=col.teaser!==undefined&&row[col.teaser]&&row[col.teaser].trim()?true:false;
+    var _ns=col.nda_sent!==undefined&&row[col.nda_sent]&&row[col.nda_sent].trim()?true:false;
+    var _nd=col.nda_signed!==undefined&&row[col.nda_signed]&&row[col.nda_signed].trim()?true:false;
+    var _im=col.im_sent!==undefined&&row[col.im_sent]&&row[col.im_sent].trim()?true:false;
+    var _mg=col.mgmt!==undefined&&row[col.mgmt]&&row[col.mgmt].trim()?true:false;
+    var _lo=col.loi!==undefined&&row[col.loi]&&row[col.loi].trim()?true:false;
+    var _bi=col.binding!==undefined&&row[col.binding]&&row[col.binding].trim()?true:false;
     var ks=['binding','site_visit','mgmt','loi','im_sent','nda_signed','nda_sent','teaser','approached','identified'];
     var lb={binding:'Binding Offer',site_visit:'Site visit',mgmt:'Management Pres.',loi:'LOI',im_sent:'IM sent',nda_signed:'NDA signed',nda_sent:'NDA sent',teaser:'Teaser sent',approached:'Approached',identified:'Identified'};
     var sc={binding:_bi,site_visit:false,mgmt:_mg,loi:_lo,im_sent:_im,nda_signed:_nd,nda_sent:_ns,teaser:_t,approached:_a,identified:true};
@@ -265,7 +271,7 @@ function load(){fetchD().then(function(data){
   // Conv row — dots aligned with bars, % between, connected by line
   var cr='';STG.forEach(function(s,idx){
     cr+='<div class="cr-col"><div class="cr-dot" style="background:'+s.c+'"></div></div>';
-    if(idx<STG.length-1){var cv=cnt[s.k]||0,nv=cnt[STG[idx+1].k]||0;var pct=cv>0?Math.round((nv/cv)*100)+'%':'';cr+='<div class="cr-mid"><div class="cr-line"></div>'+(pct?'<div class="cr-pct">'+pct+'</div>':'')+'</div>'}
+    if(idx<STG.length-1){var cv=cnt[s.k]||0,nv=cnt[STG[idx+1].k]||0;var pct=cv>0?Math.round((nv/cv)*100)+'%':'—';cr+='<div class="cr-mid"><div class="cr-line"></div><div class="cr-pct">'+pct+'</div></div>'}
   });document.getElementById('conv-row').innerHTML=cr;
   // Funnel bars
   var mx=1;STG.forEach(function(s){if((cnt[s.k]||0)>mx)mx=cnt[s.k]});
