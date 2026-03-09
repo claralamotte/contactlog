@@ -72,11 +72,12 @@ main{padding:20px 36px 48px}
 .legend-item{font-size:9px;color:var(--muted);display:inline-flex;align-items:center;gap:4px}
 .legend-bubble{display:inline-flex;align-items:center;gap:3px;background:rgba(255,255,255,.22);padding:2px 7px;border-radius:10px;font-size:9px;font-weight:600;color:#fff}
 /* PIPELINE */
-.pipeline-grid{display:grid;gap:10px}
+.pipeline-grid{display:grid;gap:10px;align-items:stretch}
+.pipeline-grid>div{display:flex;flex-direction:column}
 .stage-hdr{padding:9px 12px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between}
 .stage-hdr-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fff}
 .stage-hdr-count{background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
-.stage-body{background:var(--glass);border:1px solid var(--glass-border);border-top:none;border-radius:0 0 10px 10px;padding:8px;min-height:48px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:flex-start}
+.stage-body{background:var(--glass);border:1px solid var(--glass-border);border-top:none;border-radius:0 0 10px 10px;padding:8px;min-height:48px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:flex-start;flex:1}
 .cc{background:rgba(255,255,255,.5);border:1.5px solid #fff;border-radius:8px;padding:6px 5px 5px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;width:64px}
 .cc:hover{border-color:var(--blue);transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,133,202,.1)}
 .cc-logo{width:44px;height:30px;display:flex;align-items:center;justify-content:center;overflow:hidden}
