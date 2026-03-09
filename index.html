@@ -49,14 +49,17 @@ main{padding:20px 36px 48px}
 /* FUNNEL */
 .funnel-wrap{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:12px;padding:20px 20px 12px}
 /* Conversion flow above chart */
-.conv-flow{display:none}
+.conv-flow{display:flex;align-items:center;margin-bottom:14px;padding:0 4px}
+.conv-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;z-index:1}
+.conv-connector{flex:1;position:relative;display:flex;align-items:center;justify-content:center;height:2px}
+.conv-connector-line{position:absolute;top:0;left:0;right:0;height:2px;background:rgba(28,43,51,.08)}
+.conv-pct{font-size:8px;font-weight:600;color:var(--muted);background:#fff;padding:1px 6px;border-radius:10px;border:1px solid rgba(28,43,51,.06);position:relative;z-index:1}
 .funnel-bars{display:flex;align-items:flex-end;gap:0;height:180px;position:relative}
 .f-col{width:0;flex:1 1 0;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;position:relative}
 .f-top{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:4px}
 .f-num{font-size:11px;font-weight:600;color:var(--deep);line-height:1}
 .f-bar{width:60%;border-radius:6px 6px 0 0;min-height:6px;display:flex;align-items:center;justify-content:center;transition:height .6s cubic-bezier(.34,1.56,.64,1)}
 .f-arrow{font-size:8px;font-weight:600;padding:2px 6px;border-radius:6px;display:inline-flex;align-items:center;gap:2px;color:#fff;background:rgba(255,255,255,.22)}
-.f-conv-bubble{position:absolute;right:-14px;top:50%;transform:translateY(-50%);font-size:7px;font-weight:600;color:var(--muted);background:#fff;border:1px solid rgba(28,43,51,.08);padding:2px 5px;border-radius:10px;z-index:2;white-space:nowrap}
 .f-label-row{height:30px;width:100%;display:flex;align-items:flex-start;justify-content:center;padding-top:5px}
 .f-label{font-size:8px;text-transform:uppercase;letter-spacing:.04em;color:var(--deep);text-align:center;line-height:1.3;font-weight:600;word-break:break-word}
 .funnel-footer{display:flex;align-items:center;gap:14px;margin-top:8px;padding:0 2px}
@@ -250,24 +253,26 @@ function load(){fd().then(function(data){
   var appAct=buyers.filter(function(b){return b.approached&&!b.dropped});
   var appDrop=buyers.filter(function(b){return b.approached&&b.dropped});
   document.getElementById('pill-active').textContent=appAct.length+' active';
-  document.getElementById('pill-active-sub').innerHTML=buyers.filter(function(b){return b.approached}).length+' approached <span style="color:#bbb">('+appDrop.length+' drops)</span>';
+  document.getElementById('pill-active-sub').innerHTML=buyers.filter(function(b){return b.approached}).length+' approached<br><span style="color:#bbb">('+appDrop.length+' drops)</span>';
   // Counts
   var stMap={identified:col.identified,approached:col.approached,teaser:col.teaser,nda_sent:col.nda_sent,nda_signed:col.nda_signed,im_sent:col.im_sent,mgmt:col.mgmt,loi:col.loi,phase2:col.phase2,site_visit:col.site_visit,binding:col.binding};
   var counts={},prev={};
   if(funnelRow){STAGES.forEach(function(s){var ci=stMap[s.key];counts[s.key]=(ci!==undefined&&funnelRow[ci])?parseInt(funnelRow[ci])||0:0})}
   else{counts={identified:buyers.length,approached:buyers.filter(function(b){return b.approached}).length,teaser:buyers.filter(function(b){return b.teaser}).length,nda_sent:buyers.filter(function(b){return b.nda_sent}).length,nda_signed:buyers.filter(function(b){return b.nda_signed}).length,im_sent:buyers.filter(function(b){return b.im_sent}).length,mgmt:0,loi:0,phase2:0,site_visit:0,binding:0}}
   if(prevRow){STAGES.forEach(function(s){var ci=stMap[s.key];prev[s.key]=(ci!==undefined&&prevRow[ci])?parseInt(prevRow[ci])||0:0})}
-  // Funnel bars with numbers above + conversion bubbles between
+  // Conversion flow above chart (dots + lines + %)
+  var cf='';STAGES.forEach(function(s,idx){
+    cf+='<div class="conv-dot" style="background:'+s.color+'"></div>';
+    if(idx<STAGES.length-1){var cur=counts[s.key]||0;var nxt=counts[STAGES[idx+1].key]||0;var pct=cur>0?Math.round((nxt/cur)*100)+'%':'';cf+='<div class="conv-connector"><div class="conv-connector-line"></div>'+(pct?'<div class="conv-pct">'+pct+'</div>':'')+'</div>'}
+  });document.getElementById('conv-flow').innerHTML=cf;
+  // Funnel bars (numbers above, no conversion bubbles)
   var mx=1;STAGES.forEach(function(s){if((counts[s.key]||0)>mx)mx=counts[s.key]});
   var arw='<svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V2M6 2L3 5M6 2l3 3"/></svg>';
-  var fh='';STAGES.forEach(function(s,idx){
+  var fh='';STAGES.forEach(function(s){
     var v=counts[s.key]||0;var p=prev[s.key];var h=Math.max(6,(v/mx)*155);
     var diff=(p!==undefined)?v-p:0;
     var arrow='';if(v>0){arrow=diff>0?'<div class="f-arrow">'+arw+diff+'</div>':'<div class="f-arrow">–</div>'}
-    // Conversion bubble between this bar and next
-    var convBubble='';
-    if(idx<STAGES.length-1){var nxt=counts[STAGES[idx+1].key]||0;var pct=v>0?Math.round((nxt/v)*100)+'%':'';if(pct)convBubble='<div class="f-conv-bubble">'+pct+'</div>'}
-    fh+='<div class="f-col"><div class="f-top"><div class="f-num">'+v+'</div></div><div class="f-bar" style="height:'+h+'px;background:'+s.color+'">'+arrow+'</div>'+convBubble+'<div class="f-label-row"><div class="f-label">'+s.label+'</div></div></div>'
+    fh+='<div class="f-col"><div class="f-top"><div class="f-num">'+v+'</div></div><div class="f-bar" style="height:'+h+'px;background:'+s.color+'">'+arrow+'</div><div class="f-label-row"><div class="f-label">'+s.label+'</div></div></div>'
   });
   document.getElementById('funnel-bars').innerHTML=fh;
   // Pipeline
@@ -316,7 +321,7 @@ function showModal(name){
   if(!b.contact&&!b.email)g+='<div class="modal-detail-item"><div class="dl">Info</div><div class="dv" style="color:var(--muted)">No contact info</div></div>';
   g+='</div>';document.getElementById('modal-details').innerHTML=g;
   // Next step / drop reason
-  if(b.dropped){var dr='';var ints=pI(b.comments);for(var i=0;i<ints.length;i++){if(ints[i].text.toLowerCase().indexOf('drop')>=0){dr=ints[i].text.replace(/^drop\s*[-–—>:]+\s*/i,'').replace(/^-->\s*/,'').trim();break}}if(!dr&&b.next)dr=b.next;document.getElementById('modal-nextstep').innerHTML=dr?'<div class="drop-reason-box"><label>Drop reason</label>'+dr+'</div>':''}
+  if(b.dropped){var dr='',dropDate='';var ints=pI(b.comments);for(var i=0;i<ints.length;i++){if(ints[i].text.toLowerCase().indexOf('drop')>=0){dr=ints[i].text.replace(/^drop\s*[-–—>:]+\s*/i,'').replace(/^-->\s*/,'').trim();if(ints[i].date)dropDate=ints[i].date;break}}if(!dr&&b.next)dr=b.next;var dropHtml='';if(dr){dropHtml='<div class="drop-reason-box"><label>Drop reason</label>';if(dropDate)dropHtml+='<span style="display:inline-flex;align-items:center;font-size:9px;font-weight:600;color:var(--deep);background:#fff;border:1px solid rgba(28,43,51,.1);padding:3px 10px;border-radius:20px;margin-right:8px">'+dropDate+'</span>';dropHtml+=dr+'</div>'}document.getElementById('modal-nextstep').innerHTML=dropHtml}
   else{document.getElementById('modal-nextstep').innerHTML=b.next?'<div class="next-step-box"><label>Next step</label>'+b.next+'</div>':''}
   // Interactions
   var ints=pI(b.comments);var fi=b.dropped?ints.filter(function(x){return x.text.toLowerCase().indexOf('drop')<0}):ints;
