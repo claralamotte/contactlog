@@ -151,30 +151,32 @@ header{position:static;box-shadow:none;background:#1C2B33!important;height:44px;
 .stat-pill{background:#fff!important;border:1px solid #ddd!important;backdrop-filter:none!important;padding:6px 12px}
 .pill-n{font-size:14px}
 main{padding:8px 20px 10px}
-.sec{margin-bottom:12px}
+.sec{margin-bottom:14px}
 .sec-head{margin-bottom:8px}
-.funnel-wrap{background:#fff!important;border:1px solid #ddd!important;backdrop-filter:none!important;padding:10px 10px 6px}
-.funnel-grid{padding:0 10px!important}
-.fg-conv-line{left:calc(100%/42 + 10px)!important;right:calc(100%/42 + 10px)!important}
-.fg-axis-line{left:10px!important;right:10px!important}
-.fg-bar-cell{height:100px!important}
+.funnel-wrap{background:#fff!important;border:1px solid #ddd!important;backdrop-filter:none!important;padding:12px 8px 8px}
+.funnel-grid{padding:0 8px!important;grid-template-columns:1fr 18px 1fr 18px 1fr 18px 1fr 18px 1fr 18px 1fr 18px 1fr 18px 1fr 18px 1fr 18px 1fr 18px 1fr!important}
+.fg-conv-line{left:calc(100%/42 + 8px)!important;right:calc(100%/42 + 8px)!important}
+.fg-axis-line{left:8px!important;right:8px!important}
+.fg-bar-cell{height:140px!important}
 .fg-bar-num{font-size:11px!important}
-.funnel-footer{padding:0 10px}
+.fg-bar{min-width:0!important}
+.fg-pct{font-size:8px!important;padding:1px 5px!important}
+.fg-lbl{font-size:7px!important}
+.funnel-footer{padding:0 8px}
+.legend-item{font-size:7px}
 .pipeline-grid{gap:6px!important}
 .stage-body{background:#f5f5f5!important;backdrop-filter:none!important;padding:4px!important;min-height:0!important}
 .stage-body:empty{display:none!important}
-.pipeline-grid .stage-body-empty{display:none!important}
 .cc{background:#fff!important;backdrop-filter:none!important;width:52px!important;padding:4px 3px 3px!important}
 .cc-logo{width:34px!important;height:20px!important}
 .cc-name{font-size:6.5px!important}
-.strip-pair{gap:6px;margin-top:6px}
+.strip-pair{gap:6px;margin-top:8px}
 .strip-pair .strip-row{max-height:none}
 .strip-row{background:#f5f5f5!important;backdrop-filter:none!important;padding:4px!important}
 .strip-hdr{padding:5px 8px}
 .strip-hdr-name{font-size:8px}
-#sdr{margin-top:6px}
+#sdr{margin-top:8px}
 .live-dot{animation:none}
-.legend-item{font-size:7px}
 }
 </style>
 </head>
@@ -538,19 +540,27 @@ document.getElementById('lu-n').textContent=fmtDateNoZero(now);
 document.getElementById('lu-sub').textContent=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 load();
 
-// Before print: hide empty pipeline stages and empty strips
 window.addEventListener('beforeprint',function(){
-  var cols=document.querySelectorAll('#pg > div');
+  // Hide empty pipeline stages
+  var pg=document.getElementById('pg');
+  var cols=pg.querySelectorAll(':scope > div');
+  var visible=0;
   cols.forEach(function(col){
     var body=col.querySelector('.stage-body');
     if(body&&body.textContent.trim()==='\u2014'){col.style.display='none';col.setAttribute('data-print-hidden','1')}
+    else{visible++}
   });
+  // Reflow pipeline grid to only visible columns
+  if(visible>0){pg.setAttribute('data-orig-cols',pg.style.gridTemplateColumns);pg.style.gridTemplateColumns='repeat('+visible+',1fr)'}
+  // Hide empty strips
   ['sa','sid','sdr'].forEach(function(id){
     var el=document.getElementById(id);
     if(el&&!el.innerHTML.trim()){el.style.display='none';el.setAttribute('data-print-hidden','1')}
   });
 });
 window.addEventListener('afterprint',function(){
+  var pg=document.getElementById('pg');
+  if(pg.getAttribute('data-orig-cols')){pg.style.gridTemplateColumns=pg.getAttribute('data-orig-cols');pg.removeAttribute('data-orig-cols')}
   document.querySelectorAll('[data-print-hidden]').forEach(function(el){
     el.style.display='';el.removeAttribute('data-print-hidden');
   });
