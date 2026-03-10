@@ -398,67 +398,47 @@ function pInt(c){if(!c)return[];var lines=c.split('\n'),r=[];for(var i=0;i<lines
 
 function showStage(stageKey,stageLabel,stageColor){
   var list=ALL.filter(function(b){return b[stageKey]});
-  // Find this stage's index in STG
   var stgIdx=-1;for(var i=0;i<STG.length;i++){if(STG[i].k===stageKey){stgIdx=i;break}}
   var isEarly=(stageKey==='identified'||stageKey==='approached');
 
-  // Title with colored bubble for count
-  document.getElementById('mo2-title').innerHTML='<div style="width:14px;height:14px;border-radius:50%;background:'+stageColor+';flex-shrink:0"></div><div style="font-size:18px;font-weight:700;color:var(--deep)">'+stageLabel+'</div><div style="background:'+stageColor+';color:#fff;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;margin-left:auto">'+list.length+' buyer'+(list.length>1?'s':'')+'</div>';
+  // Helper: transparent badge HTML
+  function badge(label,color){return'<div style="font-size:8px;font-weight:700;color:'+color+';padding:3px 9px;border-radius:12px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;background:'+color+'14;border:1px solid '+color+'30">'+label+'</div>'}
+
+  // Title with transparent colored count bubble
+  document.getElementById('mo2-title').innerHTML='<div style="width:14px;height:14px;border-radius:50%;background:'+stageColor+';flex-shrink:0"></div><div style="font-size:18px;font-weight:700;color:var(--deep)">'+stageLabel+'</div><div style="color:'+stageColor+';background:'+stageColor+'14;border:1px solid '+stageColor+'30;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;margin-left:auto">'+list.length+' buyer'+(list.length>1?'s':'')+'</div>';
+
+  // Sort all alphabetically
+  list.sort(function(a,b){return a.name.localeCompare(b.name)});
 
   var h='';
+  for(var i=0;i<list.length;i++){
+    var b=list[i];
+    var right='';
+    var isHere=(b.hk===stageKey);
+    var stgLbl='',stgCol='';
+    for(var j=0;j<STG.length;j++){if(STG[j].k===b.hk){stgLbl=STG[j].l;stgCol=STG[j].c;break}}
 
-  if(isEarly){
-    // Identified / Approached: all alphabetical, with stage bubble on the right
-    list.sort(function(a,b){return a.name.localeCompare(b.name)});
-    for(var i=0;i<list.length;i++){
-      var b=list[i];
-      var stgLbl='',stgCol='';
-      for(var j=0;j<STG.length;j++){if(STG[j].k===b.hk){stgLbl=STG[j].l;stgCol=STG[j].c;break}}
-      h+='<div class="sm-item" data-name="'+b.name.replace(/"/g,'&quot;')+'">';
-      h+='<div class="sm-logo">'+L(b.name,b.domain)+'</div>';
-      h+='<div class="sm-name" style="flex:1">'+b.name+'</div>';
-      h+='<div style="font-size:8px;font-weight:700;color:#fff;padding:3px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;background:'+stgCol+'">'+stgLbl+'</div>';
-      h+='</div>';
-    }
-  } else {
-    // Teaser+: split into current stage vs advanced
-    var current=[],advanced=[];
-    for(var i=0;i<list.length;i++){
-      if(list[i].hk===stageKey){current.push(list[i])}
-      else{
-        // Check if buyer is at a higher stage
-        var bIdx=-1;for(var j=0;j<STG.length;j++){if(STG[j].k===list[i].hk){bIdx=j;break}}
-        if(bIdx>stgIdx){advanced.push(list[i])}
+    if(isEarly){
+      // Early stages: always show stage badge
+      right=badge(stgLbl,stgCol);
+    }else{
+      if(isHere){
+        // In current stage: show days
+        right=b.dis!==null?'<span class="sm-days" style="white-space:nowrap;color:'+stageColor+'">('+b.dis+'d)</span>':'';
+      }else{
+        // Advanced: show stage badge
+        right=badge(stgLbl,stgCol);
       }
     }
-    current.sort(function(a,b){return a.name.localeCompare(b.name)});
-    advanced.sort(function(a,b){return a.name.localeCompare(b.name)});
 
-    // Current stage buyers with days
-    for(var i=0;i<current.length;i++){
-      var b=current[i];
-      var days=b.dis!==null?b.dis+'d in current stage':'';
-      h+='<div class="sm-item" data-name="'+b.name.replace(/"/g,'&quot;')+'">';
-      h+='<div class="sm-logo">'+L(b.name,b.domain)+'</div>';
-      h+='<div class="sm-name" style="flex:1">'+b.name+'</div>';
-      if(days){h+='<span class="sm-days" style="white-space:nowrap">('+days+')</span>';}
-      h+='</div>';
-    }
-    // Separator if both groups exist
-    if(current.length&&advanced.length){
-      h+='<div style="border-top:1px solid rgba(28,43,51,.08);margin:6px 0"></div>';
-    }
-    // Advanced buyers with stage bubble
-    for(var i=0;i<advanced.length;i++){
-      var b=advanced[i];
-      var stgLbl='',stgCol='';
-      for(var j=0;j<STG.length;j++){if(STG[j].k===b.hk){stgLbl=STG[j].l;stgCol=STG[j].c;break}}
-      h+='<div class="sm-item" data-name="'+b.name.replace(/"/g,'&quot;')+'">';
-      h+='<div class="sm-logo">'+L(b.name,b.domain)+'</div>';
-      h+='<div class="sm-name" style="flex:1">'+b.name+'</div>';
-      h+='<div style="font-size:8px;font-weight:700;color:#fff;padding:3px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;background:'+stgCol+'">'+stgLbl+'</div>';
-      h+='</div>';
-    }
+    // Subtle left accent for buyers still at this stage (not early)
+    var accent=(!isEarly&&isHere)?'border-left:2px solid '+stageColor+';padding-left:10px;':'';
+
+    h+='<div class="sm-item" data-name="'+b.name.replace(/"/g,'&quot;')+'" style="'+accent+'">';
+    h+='<div class="sm-logo">'+L(b.name,b.domain)+'</div>';
+    h+='<div class="sm-name" style="flex:1">'+b.name+'</div>';
+    h+=right;
+    h+='</div>';
   }
   document.getElementById('mo2-list').innerHTML=h;
   document.getElementById('mo2').classList.add('open');
