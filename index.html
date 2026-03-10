@@ -63,7 +63,8 @@ main{padding:20px 36px 48px}
 /* Row 3: bars */
 .fg-bar-cell{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:180px}
 .fg-bar-num{font-size:14px;font-weight:700;color:var(--deep);margin-bottom:4px}
-.fg-bar{width:100%;border-radius:6px 6px 0 0;min-height:6px;display:flex;align-items:center;justify-content:center}
+.fg-bar{width:100%;border-radius:6px 6px 0 0;min-height:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .15s}
+.fg-bar:hover{opacity:.85}
 .f-arr{font-size:8px;font-weight:600;padding:2px 6px;border-radius:6px;display:inline-flex;align-items:center;gap:2px;color:#fff;background:rgba(255,255,255,.22)}
 /* Row 4: labels */
 .fg-lbl-cell{display:flex;justify-content:center;padding-top:5px}
@@ -147,8 +148,6 @@ main{padding:20px 36px 48px}
 .sm-logo .init{font-size:10px;font-weight:700;color:var(--blue)}
 .sm-name{font-size:13px;font-weight:600;color:var(--deep)}
 .sm-days{font-size:11px;color:var(--muted);margin-left:2px}
-.fg-bar{cursor:pointer;transition:opacity .15s}
-.fg-bar:hover{opacity:.85}
 @media print{*{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}body{background:#fff!important}header{position:static;box-shadow:none;background:#1C2B33!important}.search-wrap,.hbtn{display:none}.mo{display:none!important}.funnel-wrap,.stat-pill{background:#fff!important;border:1px solid #ddd!important;backdrop-filter:none!important}.stage-body,.strip-row{background:#f5f5f5!important;backdrop-filter:none!important}.cc{background:#fff!important;backdrop-filter:none!important}main{padding:10px 20px}.live-dot{animation:none}}
 </style>
 </head>
@@ -395,7 +394,7 @@ function load(){fetchD().then(function(data){
     var col=idx*2+1;var v=cnt[s.k]||0;var h=Math.max(6,(v/mx)*150);
     var p=prv[s.k];var d=(p!==undefined)?v-p:0;
     var ar='';if(v>0){ar=d>0?'<div class="f-arr">'+aw+'+'+d+'</div>':'<div class="f-arr">–</div>'}
-    gh+='<div class="fg-bar-cell" style="grid-column:'+col+'"><div class="fg-bar-num">'+v+'</div><div class="fg-bar" style="height:'+h+'px;background:'+s.c+'" onclick="showStage(\''+s.k+'\',\''+s.l+'\',\''+s.c+'\')">'+ar+'</div></div>';
+    gh+='<div class="fg-bar-cell" style="grid-column:'+col+'"><div class="fg-bar-num">'+v+'</div><div class="fg-bar" data-sk="'+s.k+'" data-sl="'+s.l+'" data-sc="'+s.c+'" style="height:'+h+'px;background:'+s.c+'">'+ar+'</div></div>';
   });
   // Row 3: labels
   STG.forEach(function(s,idx){
@@ -405,6 +404,8 @@ function load(){fetchD().then(function(data){
   gridEl.innerHTML=gh;
   // Position axis line at bottom of bar cells
   setTimeout(function(){var bars=gridEl.querySelectorAll('.fg-bar-cell');if(bars.length){var rect=bars[0].getBoundingClientRect();var gridRect=gridEl.getBoundingClientRect();document.getElementById('fg-axis').style.top=(rect.bottom-gridRect.top)+'px'}},50);
+  // Click delegation for funnel bars
+  gridEl.addEventListener('click',function(e){var bar=e.target.closest('.fg-bar');if(bar&&bar.dataset.sk){showStage(bar.dataset.sk,bar.dataset.sl,bar.dataset.sc)}});
   // Pipeline
   var pK=['teaser','nda_sent','nda_signed','im_sent','mgmt'];
   function hp(b){for(var i=pK.length-1;i>=0;i--){if(b[pK[i]])return pK[i]}return null}
