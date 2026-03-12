@@ -289,9 +289,8 @@ function load(onDone){fetchD().then(function(data){
   // Read Color 1 and Color 2 from metadata rows
   var c1='#0085CA',c2='#00C9A0';
   for(var i=0;i<Math.min(data.length,hI);i++){for(var j=0;j<data[i].length;j++){var lbl=(data[i][j]||'').toLowerCase().trim();if(lbl==='color 1'||lbl==='colour 1'){var v=(data[i][j+1]||'').trim();if(v)c1=v.charAt(0)==='#'?v:'#'+v}if(lbl==='color 2'||lbl==='colour 2'){var v=(data[i][j+1]||'').trim();if(v)c2=v.charAt(0)==='#'?v:'#'+v}}}
-  // Read funnel colors from row 10 (index 9), columns I-S (index 8-18)
-  var stageColors=null;
-  if(data[9]){var row10=data[9],sc=[];for(var ci=8;ci<=18;ci++){var cv=(row10[ci]||'').trim();sc.push(cv&&cv.charAt(0)==='#'?cv:null)}if(sc.some(function(x){return x}))stageColors=sc}
+  // Funnel stage colors - fixed
+  var stageColors=['#263c47','#1b4f63','#0e6280','#007499','#0085ca','#0093b8','#00a3be','#00b1be','#00beb5','#00c9a0','#00e07e'];
   applyColors(c1,c2,stageColors);
   var vd='\u2014',frMos={janv:0,f:1,mars:2,avr:3,mai:4,juin:5,juil:6,ao:7,sept:8,oct:9,nov:10,d:11},enMos=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   for(var i=0;i<Math.min(data.length,hI);i++){for(var j=0;j<data[i].length;j++){var v=(data[i][j]||'').trim().toLowerCase();if(v.indexOf('previous update')>=0||v.indexOf('previous date')>=0){for(var jj=j+1;jj<data[i].length;jj++){var dd=(data[i][jj]||'').trim();if(!dd)continue;var fm=dd.match(/^(\d{1,2})-([a-z\u00e9\u00fb]+\.?)-(\d{2,4})$/i);if(fm){for(var fk in frMos){if(fm[2].replace('.','').toLowerCase().indexOf(fk)===0){vd=parseInt(fm[1])+'-'+enMos[frMos[fk]]+'-'+fm[3];break}}if(vd!=='\u2014')break}var im=dd.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(im){vd=parseInt(im[3])+'-'+enMos[im[2]-1]+'-'+im[1].slice(2);break}var sm=dd.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);if(sm){vd=parseInt(sm[1])+'-'+enMos[sm[2]-1]+'-'+sm[3];break}}break}}if(vd!=='\u2014')break}
