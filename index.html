@@ -21,10 +21,7 @@ main{flex:1;padding:40px 40px 56px;padding-top:48px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .card:nth-child(1){animation-delay:.04s}.card:nth-child(2){animation-delay:.09s}.card:nth-child(3){animation-delay:.14s}
 .card-body{padding:32px 32px 26px;display:flex;flex-direction:column;gap:22px;flex:1}
-
 .card-title{font-size:17px;font-weight:700;letter-spacing:-.02em;line-height:1.2;color:#1C2B33 !important}
-
-
 .card-footer{display:flex;align-items:center;justify-content:space-between}
 .active-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted);font-weight:500}
 .active-dot{width:6px;height:6px;border-radius:50%;background:#4DD9AC;flex-shrink:0;animation:pulse 2s infinite}
@@ -48,15 +45,9 @@ footer{padding:18px 40px;border-top:1px solid var(--border);display:flex;justify
 <script>
 var TK = 'pk_bYWEonUXSpa1_O-4n_OaKQ';
 
-// -------------------------------------------------------
-// AJOUTE TES PROJETS ICI — copie une ligne et remplis :
-// label   : nom affiché
-// href    : chemin vers le dossier du projet
-// fallback: couleur de la barre en haut
-// -------------------------------------------------------
 var PROJECTS = [
   { label:'Project EDELWEISS', href:'./edelweiss/', domain:'cross-pharm.ch', fallback:'#0085CA' },
-  { label:'Project GEG',       href:'./geg/',       domain:'geg.asia', fallback:'#E8A838' }
+  { label:'Project GEG',       href:'./geg/',       domain:'geg.asia',       fallback:'#E06B39' }
 ];
 
 function hexRgb(h){h=h.replace('#','');return parseInt(h.substring(0,2),16)+','+parseInt(h.substring(2,4),16)+','+parseInt(h.substring(4,6),16)}
