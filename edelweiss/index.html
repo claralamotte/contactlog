@@ -202,8 +202,8 @@ var STAGE_DEFS = [
   {k:'teaser',       l:'Teaser sent',        ms:'Teaser',       match:function(h){return h.indexOf('teaser')>=0}},
   {k:'nda_sent',     l:'NDA sent',           ms:'NDA sent',     match:function(h){return h==='nda sent'}},
   {k:'nda_signed',   l:'NDA signed',         ms:'NDA signed',   match:function(h){return h==='nda signed'}},
-  {k:'q_a',          l:'Q&A',                ms:'Q&A',          match:function(h){return h==='q&a'||h==='q & a'||h==='q and a'||h==='qa'}},
   {k:'im_sent',      l:'IM sent',            ms:'IM sent',      match:function(h){return h.indexOf('im shared')>=0||h.indexOf('im sent')>=0||h==='im'}},
+  {k:'q_a',          l:'Q&A',                ms:'Q&A',          match:function(h){return h==='q&a'||h==='q & a'||h==='q and a'||h==='qa'}},
   {k:'mgmt',         l:'Management Pres.',   ms:'Mgmt Pres.',   match:function(h){return h.indexOf('mgmt')>=0||h.indexOf('management')>=0}},
   {k:'loi',          l:'LOI',                ms:'LOI',          match:function(h){return h==='loi'}},
   {k:'phase2',       l:'Phase II',           ms:'Phase II',     match:function(h){return h.indexOf('phase')>=0}},
@@ -356,7 +356,7 @@ function load(onDone){fetchD().then(function(data){
   var c1='#0085CA',c2='#00C9A0';
   for(var i=0;i<Math.min(data.length,hI);i++){for(var j=0;j<data[i].length;j++){var lbl=(data[i][j]||'').toLowerCase().trim();if(lbl==='color 1'||lbl==='colour 1'){var v=(data[i][j+1]||'').trim();if(v)c1=v.charAt(0)==='#'?v:'#'+v}if(lbl==='color 2'||lbl==='colour 2'){var v=(data[i][j+1]||'').trim();if(v)c2=v.charAt(0)==='#'?v:'#'+v}}}
   // Hardcoded stage colors (11 values for full set; if fewer stages found, subset is used positionally)
-  var baseColors=['#263c47','#1b4f63','#0e6280','#007499','#0085ca','#0074b8','#0093b8','#00a3be','#00b1be','#00beb5','#00c9a0','#00e07e'];
+  var baseColors=['#263c47','#1b4f63','#0e6280','#007499','#0085ca','#0093b8','#009ebc','#00a3be','#00b1be','#00beb5','#00c9a0','#00e07e'];
   var stageColors=[];
   STG.forEach(function(s,i){
     // Try to find the color at the same canonical position
